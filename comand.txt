@@ -1,0 +1,1 @@
+g++ ASCII.cpp `pkg-config --libs opencv4`
