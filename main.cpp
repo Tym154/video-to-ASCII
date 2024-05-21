@@ -2,36 +2,45 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <iostream>
-
-
-//This is a picture to ASCII converter i made.
-//Now i'll just have to remake it so it can capture a video from webcamera
-//and than convert the frames from the captured video
-
+#include <thread>
 
 using namespace cv;
 using namespace std;
 
 
 int main(){
-    string ascii = "  .!/?&W#@M";
-    string path = "das.png";
-    Mat img = imread(path);
-    Mat imge = imread(path);
-    
-    for(int i = 0; i < img.rows; i++){
-        vector<double> temp;
-        for(int j = 0; j < img.cols; j++){
-            cout << ascii[floor(((img.at<Vec3b>(i,j)[0]+img.at<Vec3b>(i,j)[1]+img.at<Vec3b>(i,j)[2])/3)/(255/ascii.length()))]; //I dont even know how a made this abomination of a line
+    string ascii = "   .!/?&W#@M";
+    string video_path = "video2.mp4";
+    VideoCapture cap(video_path);
+
+    double fps = cap.get(CAP_PROP_FPS);
+
+    int frame_duration = 1000 / fps;
+
+    Mat frame, resized_frame;
+
+
+    while(1){
+        cap >> frame;  
+
+        if(frame.empty()) cout << " ERDSADAS";
+
+        resize(frame, resized_frame, Size(), 0.05, 0.05, INTER_LINEAR);
+
+        string frame_ascii;
+
+        for(int i = 0; i < resized_frame.rows; i++){
+            for(int j = 0; j < resized_frame.cols; j++){
+                frame_ascii += ascii[floor(((resized_frame.at<Vec3b>(i,j)[0]+resized_frame.at<Vec3b>(i,j)[1]+resized_frame.at<Vec3b>(i,j)[2])/3)/(255/ascii.length()))];
+            }
+            frame_ascii += "\n";   
         }
-        cout << "\n";
+        system("clear");
+        std::cout << frame_ascii;
+        std::this_thread::sleep_for(std::chrono::milliseconds(frame_duration));
     }
-
-    imshow("mod", img);
-    imshow("org", imge);
-    waitKey(0);
-
     return 0;
 }
