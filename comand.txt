@@ -1,1 +1,1 @@
-g++ ASCII.cpp `pkg-config --libs opencv4`
+g++ ASCII.cpp `pkg-config --cflags --libs opencv4`
